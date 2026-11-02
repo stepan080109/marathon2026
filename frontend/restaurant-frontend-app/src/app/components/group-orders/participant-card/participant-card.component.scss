@@ -1,0 +1,139 @@
+@use 'app/shared/styles/abstracts/colors' as color;
+
+.card {
+  background: color.$neutral-0;
+  border: 1px solid color.$neutral-200;
+  border-radius: 16px;
+  padding: 20px 24px;
+  box-shadow: 0 2px 8px color.$shadow;
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 24px;
+  color: color.$neutral-900;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 16px;
+
+  &.submitted {
+    background: color.$green-100;
+    color: color.$green-800;
+    border: 1px solid color.$green-150;
+  }
+
+  &.pending {
+    background: color.$orange-100;
+    color: color.$orange-600;
+    border: 1px solid color.$orange-400;
+  }
+}
+
+.items {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  border-top: 1px solid color.$neutral-100;
+
+  &:first-child {
+    border-top: none;
+  }
+}
+
+.avatar {
+  flex: 0 0 40px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+
+  &.initial {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: color.$green-100;
+    color: color.$green-800;
+    font-size: 16px;
+    font-weight: 600;
+  }
+}
+
+.name {
+  flex: 1 1 auto;
+  min-width: 0;
+  margin: 0;
+  font-size: 14px;
+  font-weight: 500;
+  color: color.$neutral-900;
+  overflow-wrap: anywhere;
+}
+
+.qty {
+  flex: 0 0 auto;
+  margin: 0;
+  font-size: 14px;
+  color: color.$neutral-600;
+}
+
+.price {
+  flex: 0 0 auto;
+  min-width: 64px;
+  margin: 0;
+  text-align: right;
+  font-size: 14px;
+  font-weight: 500;
+  color: color.$neutral-900;
+}
+
+.empty {
+  margin: 8px 0 16px;
+  font-size: 14px;
+  color: color.$neutral-400;
+}
+
+.subtotal {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 12px 0 0;
+  padding-top: 12px;
+  border-top: 1px solid color.$neutral-200;
+  font-size: 16px;
+  font-weight: 600;
+  color: color.$neutral-900;
+}
+
+@media (max-width: 480px) {
+  .card {
+    padding: 16px;
+  }
+
+  .price {
+    min-width: 52px;
+  }
+}

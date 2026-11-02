@@ -1,0 +1,138 @@
+<main class="page">
+  <header class="page-header">
+    <div class="title-row">
+      <h1>Group Pre-Order</h1>
+      @if (!loading() && errorStatus() === null) {
+        <span
+          class="status-badge"
+          [class.open]="status() === 'Open'"
+          [class.submitted]="status() === 'Submitted'"
+        >
+          {{ statusLabel() }}
+        </span>
+      }
+    </div>
+
+    @if (invite(); as currentInvite) {
+      <div class="meta-row">
+        <span class="meta-item">
+          <img src="assets/svg/location-green.svg" alt="" width="16" height="16" aria-hidden="true" />
+          {{ currentInvite.LocationAddress }}
+        </span>
+        <span class="meta-item">
+          <img src="assets/svg/calendar-green.svg" alt="" width="16" height="16" aria-hidden="true" />
+          {{ currentInvite.StartTime | date: 'mediumDate' }}
+        </span>
+        <span class="meta-item">
+          <img src="assets/svg/clock-green.svg" alt="" width="16" height="16" aria-hidden="true" />
+          {{ currentInvite.StartTime | date: 'shortTime' }} – {{ currentInvite.EndTime | date: 'shortTime' }}
+        </span>
+        <span class="meta-item">
+          <img src="assets/svg/people-green.svg" alt="" width="16" height="16" aria-hidden="true" />
+          {{ participants().length }} of {{ currentInvite.MaxGuestCount }} guests
+        </span>
+      </div>
+    }
+  </header>
+
+  @if (loading()) {
+    <div class="state-box" role="status">
+      <p>Loading group pre-order…</p>
+    </div>
+  } @else if (errorStatus() === 404) {
+    <div class="state-box" role="alert">
+      <p>Group reservation not found</p>
+    </div>
+  } @else if (errorStatus() !== null) {
+    <div class="state-box" role="alert">
+      <p>We couldn't load the group pre-order. Please try again.</p>
+      <button type="button" class="retry-btn" (click)="loadData()">Try again</button>
+    </div>
+  } @else {
+    @if (unsubmittedCount() > 0 && status() === 'Open') {
+      <div class="warning-banner" role="status">
+        @if (unsubmittedCount() === 1) {
+          1 participant hasn't submitted their cart yet — their dishes won't be included in the order
+        } @else {
+          {{ unsubmittedCount() }} participants haven't submitted their cart yet — their dishes won't be included in the order
+        }
+      </div>
+    }
+
+    @if (!hasAnyDishes()) {
+      <div class="state-box">
+        <p>Participants haven't added any dishes yet</p>
+      </div>
+    }
+
+    <ul class="participants">
+      @for (person of participants(); track person.id) {
+        <li>
+          <app-participant-card
+            [participant]="person"
+            [isMe]="person.id === ownerSessionId()"
+          />
+        </li>
+      }
+    </ul>
+
+    @if (consolidated().items.length > 0) {
+      <section class="consolidated-section" aria-label="Consolidated pre-order">
+        <h2>Consolidated pre-order</h2>
+        <ul class="consolidated-list">
+          @for (item of consolidated().items; track item.dish.id) {
+            <li class="consolidated-item">
+              <span>{{ item.dish.name }} × {{ item.quantity }}</span>
+              <span>{{ item.dish.price * item.quantity | currency }}</span>
+            </li>
+          }
+        </ul>
+      </section>
+    }
+
+    <footer class="page-footer">
+      <div class="grand-total">
+        <span>Grand Total</span>
+        <span class="grand-total-amount">{{ grandTotal() | currency }}</span>
+      </div>
+
+      @if (status() === 'Open') {
+        <button
+          type="button"
+          class="submit-btn"
+          [disabled]="!canSubmit()"
+          (click)="openConfirmModal()"
+        >
+          Submit Pre-Order
+        </button>
+      }
+    </footer>
+  }
+
+  @if (showConfirmModal()) {
+    <app-modal title="Submit Pre-Order" (closed)="closeConfirmModal()">
+      <p>
+        Are you sure you want to send the consolidated pre-order ({{ grandTotal() | currency }}) to the restaurant?
+      </p>
+
+      <button
+        type="button"
+        modal-actions
+        class="modal-btn modal-btn--secondary"
+        [disabled]="isSubmitting()"
+        (click)="closeConfirmModal()"
+      >
+        Cancel
+      </button>
+      <button
+        type="button"
+        modal-actions
+        class="modal-btn modal-btn--primary"
+        [disabled]="isSubmitting()"
+        (click)="confirmSubmit()"
+      >
+        {{ isSubmitting() ? 'Submitting…' : 'Submit' }}
+      </button>
+    </app-modal>
+  }
+</main>
